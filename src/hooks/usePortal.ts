@@ -3,43 +3,31 @@ import { useEffect } from "react";
 
 export const usePortal = (id: string) => {
   const rootRef = React.useRef(null);
+  rootRef.current = document.createElement("div");
 
   useEffect(() => {
-    const existingParent = document.querySelector(`#${id}`);
-    const parent = existingParent || createRootElement(id);
+    const existingRoot = document.querySelector(`#${id}`);
+    const root = existingRoot || createRootElement(id);
 
-    if (!existingParent) {
-      addRootElement(parent);
+    if (!existingRoot) {
+      document.body.insertBefore(
+        root,
+        document.body.lastElementChild.nextElementSibling
+      );
     }
-
-    parent.appendChild(rootRef.current);
+    root.appendChild(rootRef.current);
 
     return () => {
-      console.log("hi");
       rootRef.current.remove();
-      parent.remove();
+      root.remove();
     };
   }, []);
 
-  const getRootElem = () => {
-    if (!rootRef.current) {
-      rootRef.current = document.createElement("div");
-    }
-    return rootRef.current;
-  };
-
-  return getRootElem();
+  return rootRef.current;
 };
 
 const createRootElement = (id: string): HTMLElement => {
   const rootContainer = document.createElement("div");
   rootContainer.setAttribute("id", id);
   return rootContainer;
-};
-
-const addRootElement = (rootElem: Element): void => {
-  document.body.insertBefore(
-    rootElem,
-    document.body.lastElementChild.nextElementSibling
-  );
 };
