@@ -9,6 +9,14 @@ type Props = {
 };
 
 const ModalManager = (props: Props) => {
+  React.useEffect(() => {
+    document.addEventListener("keydown", props.onClose, false);
+
+    return () => {
+      document.removeEventListener("keydown", props.onClose, false);
+    };
+  }, []);
+
   return props.isOpen ? <Modal {...props} /> : null;
 };
 
@@ -26,6 +34,7 @@ const Modal = (props: Props) => {
         top: 0,
         left: 0,
       }}
+      onClick={(_: React.MouseEvent<HTMLInputElement>) => props.onClose()}
     >
       <div
         style={{
@@ -34,6 +43,7 @@ const Modal = (props: Props) => {
           height: "50%",
           backgroundColor: "white",
         }}
+        onClick={(e: React.MouseEvent<HTMLInputElement>) => e.stopPropagation()}
       >
         {props.children}
       </div>
